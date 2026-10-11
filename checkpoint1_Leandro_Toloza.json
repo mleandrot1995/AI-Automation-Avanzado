@@ -1,0 +1,144 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "88822a56-332b-4f2e-a554-660555a14d88",
+      "name": "When chat message received",
+      "webhookId": "bd98dadc-0d91-4f20-ad28-01fa1bc36496"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=RESPONDER A PREGUNTA DEL USUARIO ANALIZANDOLA Y DETECTA EL RESTO DE COMPONENTES:  {{ $json.chatInput }} Y GENERA UNA RESPUESTA ACORDE A LA CONSULTA,\nQUE LA REDACCION SEA LO MAS A PARECIDA A UNA ESCRITURA HUMANA\nNO USES LISTAS SALVO QUE MENCIONES PRODUCTOS O SERVICIOS NO USES LENGUAJE INFORMA O DEMASIADO TECNICO, NO HAGAS REFERENCIA A OTROS TEMAS QUE NO SEAN DE LA CONSULTA",
+        "options": {
+          "systemMessage": "ERES UN AGENTE EXPERTO EN ATENCIÓN AL CLIENTE AMABLE, TU OBJETIVO ES ASESORAR A POTENCIALES CLIENTES PARA QUE CONOZCAN NUESTROS PRODUCTOS Y TU RESTRICCIÓN ES HABLAR UNICAMENTE DE LOS PRODUCTOS QUE POSEE NUESTRA CONSULTORA:\n- ANALISIS DE DATOS\n- ANALISIS DE CIBERSEGURIDAD\n- ANALISIS DE COMPLIANCE",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "c13c71f1-e3d0-4c0f-bbdd-90b8b8f85a80",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.8-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        176
+      ],
+      "id": "4a00746b-62f8-41f7-bbdb-af8292aa7700",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "pZwDz0RWGApTGRL8",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        31.203125
+      ],
+      "id": "4494d0d0-4b36-4f6c-8f2c-975e450a7fdc",
+      "name": "Send a message",
+      "webhookId": "d316dabb-828c-4460-a88c-eb0bd1e2c643"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.chatInput }}"
+      },
+      "type": "n8n-nodes-base.googleTranslateTool",
+      "typeVersion": 2,
+      "position": [
+        384,
+        208
+      ],
+      "id": "90d887fd-ee69-4bee-a7d4-06f273c62e85",
+      "name": "Translate a language in Google Translate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translate a language in Google Translate": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0a00ac31-ea08-45b9-a987-e203fd68fe66",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8f3bf07174d7867ce204ec9917aeac97d947395736839777ead8a9398fa23c18"
+  },
+  "nodeGroups": [],
+  "id": "0ArN2JdPdUEf0Vtb",
+  "tags": []
+}
